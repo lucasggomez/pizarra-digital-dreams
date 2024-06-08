@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra de Vehículos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .message {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+        }
+        .message.user {
+            justify-content: flex-end;
+            background-color: #dcf8c6;
+        }
+        .message-content {
+            max-width: 75%;
+            word-wrap: break-word;
+        }
+        .message-timestamp {
+            font-size: 0.8em;
+            color: #888;
+            margin-left: 10px;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .history-container {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 200px;
+            margin-top: 20px;
+        }
+        .history-container p {
+            margin: 0;
+            padding: 5px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .editable-container {
+            display: flex;
+            align-items: center;
+        }
+        .editable {
+            width: 40px;
+            text-align: center;
+        }
+        .fullscreen-toggle {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .vehicle-table-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+        }
+        .vehicle-table-fullscreen .close-fullscreen {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5" id="app-container">
+        <div id="login-form" class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Iniciar Sesión</h2>
+                    </div>
+                    <div class="card-body">
+                        <input type="email" id="email" class="form-control mb-2" placeholder="Email">
+                        <input type="password" id="password" class="form-control mb-2" placeholder="Contraseña">
+                        <button class="btn btn-primary btn-block" onclick="login()">Iniciar Sesión</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="main-content" class="d-none">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="add-vehicle">
+                                <h2>Agregar Servicio</h2>
+                                <input type="text" id="vehicle-name" class="form-control mb-2" placeholder="Nombre del Vehículo">
+                                <input type="text" id="service" class="form-control mb-2" placeholder="Servicio">
+                                <input type="number" id="passengers" class="form-control mb-2" placeholder="Capacidad">
+                                <input type="number" id="available-seats" class="form-control mb-2" placeholder="Paxs">
+                                <button class="btn btn-success btn-block" onclick="addService()">Agregar</button>
+                                <button id="register-button" class="btn btn-secondary btn-block d-none" onclick="showRegisterForm()">Registrar Nuevo Usuario</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h2 class="mb-0">Chat</h2>
+                            <button class="btn btn-danger btn-sm" onclick="clearChat()">Limpiar Chat</button>
+                        </div>
+                        <div class="card-body chat-container">
+                            <div id="chat-messages" class="chat-messages mb-3" style="height: 200px; overflow-y: scroll;">
+                                <!-- Mensajes del chat -->
+                            </div>
+                            <input type="text" id="chat-input" class="form-control mb-2" placeholder="Escribe un mensaje..." onkeydown="handleKeyDown(event)">
+                            <button class="btn btn-primary btn-block" onclick="sendMessage()">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h2>Pizarra de Vehículos</h2>
+                            <button class="btn btn-secondary" onclick="toggleVehicleTableFullscreen()">Expandir</button>
+                        </div>
+                        <div class="card-body" id="vehicle-table-container">
+                            <table class="table table-bordered" id="vehicle-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vehículo</th>
+                                        <th>Capacidad</th>
+                                        <th>Servicio</th>
+                                        <th>Paxs</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Las filas de vehículos se añadirán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h2>Historial de Cambios</h2>
+                        </div>
+                        <div class="card-body history-container" id="change-log">
+                            <!-- Historial de cambios -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="register-form" class="d-none">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Registrar Nuevo Usuario</h2>
+                        </div>
+                        <div class="card-body">
+                            <input type="email" id="new-email" class="form-control mb-2" placeholder="Email">
+                            <input type="password" id="new-password" class="form-control mb-2" placeholder="Contraseña">
+                            <button class="btn btn-secondary btn-block" onclick="register()">Registrar</button>
+                            <button class="btn btn-primary btn-block" onclick="hideRegisterForm()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <audio id="chat-sound" src="chat-sound.mp3" preload="auto"></audio>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script>
+        // Configuración de Firebase - reemplaza estos valores con los de tu proyecto
+        const firebaseConfig = {
+        apiKey: "AIzaSyAamAWHFqqbHaYVH7pC3OluEO0yhpNzLb8",
+        authDomain: "pizarra-dreams.firebaseapp.com",
+        databaseURL: "https://pizarra-dreams-default-rtdb.firebaseio.com",
+        projectId: "pizarra-dreams",
+        storageBucket: "pizarra-dreams.appspot.com",
+        messagingSenderId: "692492737094",
+        appId: "1:692492737094:web:99d16da0d20b0d14174847"
+        };
+        // Inicializa Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
