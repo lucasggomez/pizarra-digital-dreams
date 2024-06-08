@@ -5,12 +5,14 @@ function addService() {
     const vehicleName = document.getElementById('vehicle-name').value;
     const service = document.getElementById('service').value;
     const passengers = document.getElementById('passengers').value;
-    const availableSeats = document.getElementById('available-seats').value;
+    const soldSeats = document.getElementById('sold-seats').value;
+    const availableSeats = passengers - soldSeats;
 
-    if (vehicleName && service && passengers && availableSeats) {
+    if (vehicleName && service && passengers && soldSeats >= 0) {
         db.ref('vehicles/' + vehicleName).set({
             service,
             passengers,
+            soldSeats,
             availableSeats,
             lastUpdated: new Date().toLocaleString()
         }).catch(error => {
@@ -19,14 +21,19 @@ function addService() {
     }
 }
 
-function updateSeats(vehicleName, seats) {
-    db.ref('vehicles/' + vehicleName).update({
-        availableSeats: seats,
-        lastUpdated: new Date().toLocaleString()
-    }).catch(error => {
-        console.error("Error updating seats:", error);
+function updateSeats(vehicleName, soldSeats) {
+    db.ref('vehicles/' + vehicleName).once('value').then(snapshot => {
+        const vehicle = snapshot.val();
+        const availableSeats = vehicle.passengers - soldSeats;
+        db.ref('vehicles/' + vehicleName).update({
+            soldSeats: soldSeats,
+            availableSeats: availableSeats,
+            lastUpdated: new Date().toLocaleString()
+        }).catch(error => {
+            console.error("Error updating seats:", error);
+        });
+        logChange(`Los lugares vendidos del vehículo ${vehicleName} se han actualizado a ${soldSeats}.`);
     });
-    logChange(`Los lugares disponibles del vehículo ${vehicleName} se han actualizado a ${seats}.`);
 }
 
 function deleteVehicle(vehicleName) {
@@ -39,17 +46,19 @@ function deleteVehicle(vehicleName) {
 function incrementSeats(vehicleName) {
     db.ref('vehicles/' + vehicleName).once('value').then(snapshot => {
         const vehicle = snapshot.val();
-        const newSeats = parseInt(vehicle.availableSeats) + 1;
-        updateSeats(vehicleName, newSeats);
+        const newSoldSeats = parseInt(vehicle.soldSeats) + 1;
+        if (newSoldSeats <= vehicle.passengers) {
+            updateSeats(vehicleName, newSoldSeats);
+        }
     });
 }
 
 function decrementSeats(vehicleName) {
     db.ref('vehicles/' + vehicleName).once('value').then(snapshot => {
         const vehicle = snapshot.val();
-        const newSeats = parseInt(vehicle.availableSeats) - 1;
-        if (newSeats >= 0) {
-            updateSeats(vehicleName, newSeats);
+        const newSoldSeats = parseInt(vehicle.soldSeats) - 1;
+        if (newSoldSeats >= 0) {
+            updateSeats(vehicleName, newSoldSeats);
         }
     });
 }
@@ -70,10 +79,11 @@ db.ref('vehicles').on('value', (snapshot) => {
             <td>
                 <div class="editable-container">
                     <button class="btn btn-secondary btn-sm" onclick="decrementSeats('${vehicleName}')">-</button>
-                    <div class="editable">${vehicle.availableSeats}</div>
+                    <div class="editable">${vehicle.soldSeats}</div>
                     <button class="btn btn-secondary btn-sm" onclick="incrementSeats('${vehicleName}')">+</button>
                 </div>
             </td>
+            <td>${vehicle.availableSeats}</td>
             <td><button class="btn btn-danger btn-sm" onclick="deleteVehicle('${vehicleName}')">X</button></td>
         `;
         vehicleTableBody.appendChild(row);
@@ -129,13 +139,6 @@ function login() {
         .then(userCredential => {
             document.getElementById('login-form').classList.add('d-none');
             document.getElementById('main-content').classList.remove('d-none');
-
-            const currentUser = auth.currentUser;
-            if (currentUser && currentUser.email === 'lucas@patagoniadreams.com.ar') {
-                document.getElementById('register-button').classList.remove('d-none');
-            } else {
-                document.getElementById('register-button').classList.add('d-none');
-            }
         })
         .catch(error => {
             console.error("Error signing in:", error);
@@ -146,19 +149,14 @@ function register() {
     const email = document.getElementById('new-email').value;
     const password = document.getElementById('new-password').value;
 
-    const currentUser = auth.currentUser;
-    if (currentUser && currentUser.email === 'lucas@patagoniadreams.com.ar') {
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                document.getElementById('register-form').classList.add('d-none');
-                document.getElementById('main-content').classList.remove('d-none');
-            })
-            .catch(error => {
-                console.error("Error registering:", error);
-            });
-    } else {
-        console.error("No tienes permiso para registrar nuevos usuarios.");
-    }
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            document.getElementById('register-form').classList.add('d-none');
+            document.getElementById('main-content').classList.remove('d-none');
+        })
+        .catch(error => {
+            console.error("Error registering:", error);
+        });
 }
 
 function logout() {

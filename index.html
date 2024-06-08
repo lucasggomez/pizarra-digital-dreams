@@ -110,7 +110,7 @@
                                 <input type="text" id="vehicle-name" class="form-control mb-2" placeholder="Nombre del Vehículo">
                                 <input type="text" id="service" class="form-control mb-2" placeholder="Servicio">
                                 <input type="number" id="passengers" class="form-control mb-2" placeholder="Capacidad">
-                                <input type="number" id="available-seats" class="form-control mb-2" placeholder="Paxs">
+                                <input type="number" id="sold-seats" class="form-control mb-2" placeholder="Vendidos">
                                 <button class="btn btn-success btn-block" onclick="addService()">Agregar</button>
                                 <button id="register-button" class="btn btn-secondary btn-block d-none" onclick="showRegisterForm()">Registrar Nuevo Usuario</button>
                             </div>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h2 class="mb-0">Chat</h2>
+                            <h2 class="mb-0">Chat Interno</h2>
                             <button class="btn btn-danger btn-sm" onclick="clearChat()">Limpiar Chat</button>
                         </div>
                         <div class="card-body chat-container">
@@ -143,7 +143,8 @@
                                         <th>Vehículo</th>
                                         <th>Capacidad</th>
                                         <th>Servicio</th>
-                                        <th>Paxs</th>
+                                        <th>Vendidos</th>
+                                        <th>Disponibles</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -205,6 +206,7 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
 
 
