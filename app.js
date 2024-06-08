@@ -65,28 +65,31 @@ function decrementSeats(vehicleName) {
 
 db.ref('vehicles').on('value', (snapshot) => {
     const vehicleTableBody = document.querySelector('#vehicle-table tbody');
+    const modalVehicleTableBody = document.querySelector('#modal-vehicle-table tbody');
     vehicleTableBody.innerHTML = '';
+    modalVehicleTableBody.innerHTML = '';
 
     const vehicles = snapshot.val();
     for (const vehicleName in vehicles) {
         const vehicle = vehicles[vehicleName];
-        const row = document.createElement('tr');
-        row.classList.add('vehicle');
-        row.innerHTML = `
-            <td>${vehicleName}</td>
-            <td>${vehicle.passengers}</td>
-            <td>${vehicle.service}</td>
-            <td>
-                <div class="editable-container">
-                    <button class="btn btn-secondary btn-sm" onclick="decrementSeats('${vehicleName}')">-</button>
-                    <div class="editable">${vehicle.soldSeats}</div>
-                    <button class="btn btn-secondary btn-sm" onclick="incrementSeats('${vehicleName}')">+</button>
-                </div>
-            </td>
-            <td>${vehicle.availableSeats}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="deleteVehicle('${vehicleName}')">X</button></td>
+        const row = `
+            <tr class="vehicle">
+                <td>${vehicleName}</td>
+                <td>${vehicle.passengers}</td>
+                <td>${vehicle.service}</td>
+                <td>
+                    <div class="editable-container">
+                        <button class="btn btn-secondary btn-sm" onclick="decrementSeats('${vehicleName}')">-</button>
+                        <div class="editable">${vehicle.soldSeats}</div>
+                        <button class="btn btn-secondary btn-sm" onclick="incrementSeats('${vehicleName}')">+</button>
+                    </div>
+                </td>
+                <td>${vehicle.availableSeats}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteVehicle('${vehicleName}')">X</button></td>
+            </tr>
         `;
-        vehicleTableBody.appendChild(row);
+        vehicleTableBody.innerHTML += row;
+        modalVehicleTableBody.innerHTML += row;
     }
 });
 
