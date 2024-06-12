@@ -6,6 +6,14 @@
     <title>Pizarra de Vehículos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .message {
             display: flex;
             justify-content: flex-start;
@@ -85,135 +93,137 @@
     </style>
 </head>
 <body>
-    <div class="container mt-5" id="app-container">
-        <div id="login-form" class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Iniciar Sesión</h2>
-                    </div>
-                    <div class="card-body">
-                        <input type="email" id="email" class="form-control mb-2" placeholder="Email">
-                        <input type="password" id="password" class="form-control mb-2" placeholder="Contraseña">
-                        <button class="btn btn-primary btn-block" onclick="login()">Iniciar Sesión</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="main-content" class="d-none">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="add-vehicle">
-                                <h2 class="small-title">Agregar Servicio</h2>
-                                <input type="text" id="vehicle-name" class="form-control mb-2" placeholder="Nombre del Vehículo">
-                                <input type="text" id="service" class="form-control mb-2" placeholder="Servicio">
-                                <input type="number" id="passengers" class="form-control mb-2" placeholder="Capacidad">
-                                <input type="number" id="sold-seats" class="form-control mb-2" placeholder="Vendidos">
-                                <button class="btn btn-success btn-block" onclick="addService()">Agregar</button>
-                                <button id="register-button" class="btn btn-secondary btn-block" onclick="showRegisterForm()">Registrar Nuevo Usuario</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h2 class="mb-0 small-title">Chat Interno</h2>
-                            <button class="btn btn-danger btn-sm" onclick="clearChat()">Limpiar Chat</button>
-                        </div>
-                        <div class="card-body chat-container">
-                            <div id="chat-messages" class="chat-messages mb-3" style="height: 200px; overflow-y: scroll;">
-                                <!-- Mensajes del chat -->
-                            </div>
-                            <input type="text" id="chat-input" class="form-control mb-2" placeholder="Escribe un mensaje..." onkeydown="handleKeyDown(event)">
-                            <button class="btn btn-primary btn-block" onclick="sendMessage()">Enviar</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h2 class="small-title">Pizarra de Vehículos</h2>
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#vehicleTableModal">Expandir</button>
-                        </div>
-                        <div class="card-body" id="vehicle-table-container">
-                            <table class="table table-bordered" id="vehicle-table">
-                                <thead>
-                                    <tr>
-                                        <th>Vehículo</th>
-                                        <th>Capacidad</th>
-                                        <th>Servicio</th>
-                                        <th>Vendidos</th>
-                                        <th>Disponibles</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Las filas de vehículos se añadirán aquí -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h2 class="small-title">Historial de Cambios</h2>
-                        </div>
-                        <div class="card-body history-container" id="change-log">
-                            <!-- Historial de cambios -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="register-form" class="d-none">
-            <div class="row justify-content-center">
+    <div class="gradient-bg" id="login-container">
+        <div class="container mt-5" id="app-container">
+            <div id="login-form" class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">
-                            <h2>Registrar Nuevo Usuario</h2>
+                            <h2>Iniciar Sesión</h2>
                         </div>
                         <div class="card-body">
-                            <input type="email" id="new-email" class="form-control mb-2" placeholder="Email">
-                            <input type="password" id="new-password" class="form-control mb-2" placeholder="Contraseña">
-                            <button class="btn btn-secondary btn-block" onclick="register()">Registrar</button>
-                            <button class="btn btn-primary btn-block" onclick="hideRegisterForm()">Cancelar</button>
+                            <input type="email" id="email" class="form-control mb-2" placeholder="Email">
+                            <input type="password" id="password" class="form-control mb-2" placeholder="Contraseña">
+                            <button class="btn btn-primary btn-block" onclick="login()">Iniciar Sesión</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <audio id="chat-sound" src="chat-sound.mp3" preload="auto"></audio>
+            <div id="main-content" class="d-none gradient-bg-inner">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="add-vehicle">
+                                    <h2 class="small-title">Agregar Servicio</h2>
+                                    <input type="text" id="vehicle-name" class="form-control mb-2" placeholder="Nombre del Vehículo">
+                                    <input type="text" id="service" class="form-control mb-2" placeholder="Servicio">
+                                    <input type="number" id="passengers" class="form-control mb-2" placeholder="Capacidad">
+                                    <input type="number" id="sold-seats" class="form-control mb-2" placeholder="Vendidos">
+                                    <button class="btn btn-success btn-block" onclick="addService()">Agregar</button>
+                                    <button id="register-button" class="btn btn-secondary btn-block" onclick="showRegisterForm()">Registrar Nuevo Usuario</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 class="mb-0 small-title">Chat Interno</h2>
+                                <button class="btn btn-danger btn-sm" onclick="clearChat()">Limpiar Chat</button>
+                            </div>
+                            <div class="card-body chat-container">
+                                <div id="chat-messages" class="chat-messages mb-3" style="height: 200px; overflow-y: scroll;">
+                                    <!-- Mensajes del chat -->
+                                </div>
+                                <input type="text" id="chat-input" class="form-control mb-2" placeholder="Escribe un mensaje..." onkeydown="handleKeyDown(event)">
+                                <button class="btn btn-primary btn-block" onclick="sendMessage()">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 class="small-title">Pizarra de Vehículos</h2>
+                                <button class="btn btn-secondary" data-toggle="modal" data-target="#vehicleTableModal">Expandir</button>
+                            </div>
+                            <div class="card-body" id="vehicle-table-container">
+                                <table class="table table-bordered" id="vehicle-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehículo</th>
+                                            <th>Capacidad</th>
+                                            <th>Servicio</th>
+                                            <th>Vendidos</th>
+                                            <th>Disponibles</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Las filas de vehículos se añadirán aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h2 class="small-title">Historial de Cambios</h2>
+                            </div>
+                            <div class="card-body history-container" id="change-log">
+                                <!-- Historial de cambios -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="register-form" class="d-none">
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Registrar Nuevo Usuario</h2>
+                            </div>
+                            <div class="card-body">
+                                <input type="email" id="new-email" class="form-control mb-2" placeholder="Email">
+                                <input type="password" id="new-password" class="form-control mb-2" placeholder="Contraseña">
+                                <button class="btn btn-secondary btn-block" onclick="register()">Registrar</button>
+                                <button class="btn btn-primary btn-block" onclick="hideRegisterForm()">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <audio id="chat-sound" src="chat-sound.mp3" preload="auto"></audio>
 
-        <!-- Modal -->
-        <div class="modal fade" id="vehicleTableModal" tabindex="-1" aria-labelledby="vehicleTableModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title small-title" id="vehicleTableModalLabel">Pizarra de Vehículos</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="modal-vehicle-table-container">
-                            <table class="table table-bordered" id="modal-vehicle-table">
-                                <thead>
-                                    <tr>
-                                        <th>Vehículo</th>
-                                        <th>Capacidad</th>
-                                        <th>Servicio</th>
-                                        <th>Vendidos</th>
-                                        <th>Disponibles</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Las filas de vehículos se añadirán aquí -->
-                                </tbody>
-                            </table>
+            <!-- Modal -->
+            <div class="modal fade" id="vehicleTableModal" tabindex="-1" aria-labelledby="vehicleTableModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title small-title" id="vehicleTableModalLabel">Pizarra de Vehículos</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="modal-vehicle-table-container">
+                                <table class="table table-bordered" id="modal-vehicle-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehículo</th>
+                                            <th>Capacidad</th>
+                                            <th>Servicio</th>
+                                            <th>Vendidos</th>
+                                            <th>Disponibles</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Las filas de vehículos se añadirán aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -245,6 +255,7 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
 
 

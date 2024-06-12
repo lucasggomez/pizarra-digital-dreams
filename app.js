@@ -18,6 +18,7 @@ function addService() {
         }).catch(error => {
             console.error("Error writing to database:", error);
         });
+        logChange(`Agregó el vehículo ${vehicleName} con ${passengers} asientos y ${soldSeats} vendidos.`);
     }
 }
 
@@ -32,7 +33,7 @@ function updateSeats(vehicleName, soldSeats) {
         }).catch(error => {
             console.error("Error updating seats:", error);
         });
-        logChange(`Los lugares vendidos del vehículo ${vehicleName} se han actualizado a ${soldSeats}.`);
+        logChange(`Actualizó los lugares vendidos del vehículo ${vehicleName} a ${soldSeats}.`);
     });
 }
 
@@ -40,7 +41,7 @@ function deleteVehicle(vehicleName) {
     db.ref('vehicles/' + vehicleName).remove().catch(error => {
         console.error("Error deleting vehicle:", error);
     });
-    logChange(`El vehículo ${vehicleName} ha sido eliminado.`);
+    logChange(`Eliminó el vehículo ${vehicleName}.`);
 }
 
 function incrementSeats(vehicleName) {
@@ -195,8 +196,10 @@ function hideRegisterForm() {
 
 // Logging changes
 function logChange(message) {
+    const user = auth.currentUser;
+    const userEmail = user ? user.email : 'Unknown';
     db.ref('changes').push({
-        message,
+        message: `${userEmail} ${message}`,
         timestamp: new Date().toLocaleString()
     });
 }
